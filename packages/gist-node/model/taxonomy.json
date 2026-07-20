@@ -1,0 +1,187 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "slug": "arts-culture",
+      "name": "Arts & Culture",
+      "description": "Visual art, design, literature, theatre, and cultural criticism.",
+      "iab": "Arts, Entertainment",
+      "apple": "Arts"
+    },
+    {
+      "slug": "business",
+      "name": "Business & Entrepreneurship",
+      "description": "Starting and running companies, startups, strategy, and management.",
+      "iab": "Business",
+      "apple": "Business"
+    },
+    {
+      "slug": "finance",
+      "name": "Personal Finance & Investing",
+      "description": "Budgeting, saving, investing, markets, crypto, and money decisions.",
+      "iab": "Personal Finance",
+      "apple": "Business"
+    },
+    {
+      "slug": "career",
+      "name": "Careers & Productivity",
+      "description": "Jobs, hiring, workplace skills, remote work, and getting things done.",
+      "iab": "Careers",
+      "apple": "Business"
+    },
+    {
+      "slug": "technology",
+      "name": "Technology & Software",
+      "description": "Software, gadgets, AI, programming, cloud infrastructure, engineering, and the tech industry.",
+      "iab": "Technology & Computing",
+      "apple": "Technology"
+    },
+    {
+      "slug": "science",
+      "name": "Science",
+      "description": "Research, space, biology, physics, and how the world works.",
+      "iab": "Science",
+      "apple": "Science"
+    },
+    {
+      "slug": "health-fitness",
+      "name": "Health & Fitness",
+      "description": "Exercise, nutrition, mental health, medicine, and wellbeing.",
+      "iab": "Health",
+      "apple": "Health & Fitness"
+    },
+    {
+      "slug": "food-drink",
+      "name": "Food & Cooking",
+      "description": "Recipes, restaurants, cooking technique, coffee, and drinks.",
+      "iab": "Food & Drink",
+      "apple": "Leisure"
+    },
+    {
+      "slug": "travel",
+      "name": "Travel & Outdoors",
+      "description": "Destinations, trip planning, adventure, and life on the road.",
+      "iab": "Travel",
+      "apple": "Society & Culture"
+    },
+    {
+      "slug": "education",
+      "name": "Education & Learning",
+      "description": "Teaching, studying, courses, languages, and how to learn.",
+      "iab": "Education",
+      "apple": "Education"
+    },
+    {
+      "slug": "news-politics",
+      "name": "News & Politics",
+      "description": "Current events, policy, elections, and political commentary.",
+      "iab": "News & Politics",
+      "apple": "News"
+    },
+    {
+      "slug": "society-culture",
+      "name": "Society & Culture",
+      "description": "Social issues, identity, philosophy, and everyday culture.",
+      "iab": "Society",
+      "apple": "Society & Culture"
+    },
+    {
+      "slug": "comedy",
+      "name": "Comedy & Entertainment",
+      "description": "Humor, pop culture, celebrity, and light entertainment.",
+      "iab": "Pop Culture",
+      "apple": "Comedy"
+    },
+    {
+      "slug": "music",
+      "name": "Music",
+      "description": "Making music, artists, genres, gear, and the music industry.",
+      "iab": "Music & Audio",
+      "apple": "Music"
+    },
+    {
+      "slug": "film-tv",
+      "name": "Film & TV",
+      "description": "Movies, television, streaming, reviews, and filmmaking.",
+      "iab": "Movies",
+      "apple": "TV & Film"
+    },
+    {
+      "slug": "gaming",
+      "name": "Video Gaming",
+      "description": "Games, esports, game design, and gaming culture.",
+      "iab": "Video Gaming",
+      "apple": "Leisure"
+    },
+    {
+      "slug": "sports",
+      "name": "Sports",
+      "description": "Teams, athletes, matches, training, and sports analysis.",
+      "iab": "Sports",
+      "apple": "Sports"
+    },
+    {
+      "slug": "lifestyle-fashion",
+      "name": "Lifestyle & Fashion",
+      "description": "Style, beauty, trends, and everyday lifestyle content.",
+      "iab": "Style & Fashion",
+      "apple": "Society & Culture"
+    },
+    {
+      "slug": "home-garden",
+      "name": "Home, Garden & DIY",
+      "description": "Home improvement, interior decor, gardening, houseplants, and hands-on DIY projects.",
+      "iab": "Home & Garden",
+      "apple": "Leisure"
+    },
+    {
+      "slug": "parenting-family",
+      "name": "Family & Parenting",
+      "description": "Raising kids, family life, pregnancy, and parenting.",
+      "iab": "Family & Relationships",
+      "apple": "Kids & Family"
+    },
+    {
+      "slug": "relationships",
+      "name": "Relationships & Dating",
+      "description": "Dating, romance, friendship, and interpersonal advice.",
+      "iab": "Family & Relationships",
+      "apple": "Society & Culture"
+    },
+    {
+      "slug": "self-improvement",
+      "name": "Self-Improvement",
+      "description": "Motivation, habits, mindset, and personal growth.",
+      "iab": "Healthy Living",
+      "apple": "Education"
+    },
+    {
+      "slug": "spirituality-religion",
+      "name": "Religion & Spirituality",
+      "description": "Faith, meditation, mindfulness, and spiritual practice.",
+      "iab": "Religion & Spirituality",
+      "apple": "Religion & Spirituality"
+    },
+    {
+      "slug": "history",
+      "name": "History",
+      "description": "Historical events, figures, and how the past shaped now.",
+      "iab": "Society",
+      "apple": "History"
+    },
+    {
+      "slug": "true-crime",
+      "name": "True Crime",
+      "description": "Crimes, investigations, mysteries, and the justice system.",
+      "iab": "News & Politics",
+      "apple": "True Crime"
+    },
+    {
+      "slug": "creator-economy",
+      "name": "Creator Economy & Marketing",
+      "description": "Growing an audience, monetizing content, and online marketing.",
+      "iab": "Business & Finance",
+      "apple": "Business"
+    }
+  ]
+}

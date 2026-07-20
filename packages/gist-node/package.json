@@ -1,0 +1,30 @@
+{
+  "name": "@desert-ant-labs/gist",
+  "version": "0.1.0",
+  "description": "On-device multi-label content topic tagging (26 topics, 7 languages) with channel roll-up, via WebAssembly + LiteRT.js.",
+  "type": "module",
+  "private": true,
+  "license": "SEE LICENSE IN LICENSE.md",
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": { "types": "./index.d.ts", "default": "./index.js" },
+    "./wasm": "./dist/GistWeb.wasm"
+  },
+  "files": ["index.js", "index.d.ts", "channel.js", "dist", "model", "LICENSE.md"],
+  "scripts": {
+    "test": "node --test test/gist.test.mjs"
+  },
+  "dependencies": {
+    "@bjorn3/browser_wasi_shim": "^0.3.0"
+  },
+  "peerDependencies": {
+    "@litertjs/core": ">=2.1.0"
+  },
+  "peerDependenciesMeta": {
+    "@litertjs/core": { "optional": true }
+  },
+  "devDependencies": {
+    "@litertjs/core": "^2.5.2"
+  }
+}

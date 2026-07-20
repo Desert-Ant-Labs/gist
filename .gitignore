@@ -1,0 +1,18 @@
+# Swift build
+.build/
+.swiftpm/
+*.xcodeproj
+
+# Built wasm output (rebuilt by `mise run build-web`)
+packages/gist-node/dist/
+
+# node
+packages/gist-node/node_modules/
+node_modules/
+
+# vendored runtime libs (fetched by mise)
+Vendor/
+
+# scratch
+sdk-artifacts/
+.DS_Store
