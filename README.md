@@ -1,110 +1,183 @@
 # gist
 
-On-device, multi-label **content topic tagging**. Reads a post (title, or title + description) and
-returns the topics it is about, from a fixed **26-topic taxonomy**, across **7 languages**
-(en, nl, fr, de, es, sv, pt). Runs on device — no transformer at inference, no server, no per-call
-cost — with **channel roll-up** to aggregate a channel's posts into channel-level topics.
+On-device, multi-label **content topic tagging**. Reads a piece of text — a title, a post, or a
+longer description — and returns the topics it is about, from a fixed **36-topic taxonomy**, across
+**101 languages**. A compact two-stream classifier (static embedding + hashed n-grams) with **no
+transformer at inference** — it runs fully on device, with no server and no per-call cost. The
+deployable model is **~74 MB** and downloads from Hugging Face on first use (offline bundling is
+opt-in).
 
-Built on the cross-platform Swift SDK pattern (see `Desert-Ant-Labs/redact`): the pipeline is
-written once in pure Swift (`Sources/Gist`) and runs everywhere. **This beta ships the Node/Web
-package**; Apple (Core ML) and Android (LiteRT) are planned.
+One pure-Swift pipeline runs everywhere: **Apple (Core ML)**, **Android (LiteRT)**, and **Node + the
+browser (WebAssembly + LiteRT.js)**. Ships as a Swift package, a Maven artifact, and an npm package.
 
 > `"How to film a two-person podcast with two iPhones"` → **technology**, **creator-economy**  ·
-> `"Why Billionaires Fear This Economist"` → **finance**, **business**  ·
-> `"My Go-To Shaky Head for South Georgia Summer Bass"` → **sports**
+> `"Cómo invertir en fondos indexados"` → **finance**  ·
+> `"Tips for adopting a rescue dog"` → **pets-animals**  ·
+> `"投资指数基金入门"` → **finance**
 
-## Node / Web (`@desert-ant-labs/gist`)
+The model weights and full model card live at
+[`desert-ant-labs/gist`](https://huggingface.co/desert-ant-labs/gist); a live browser demo is at
+[`desert-ant-labs/gist-demo`](https://huggingface.co/spaces/desert-ant-labs/gist-demo).
 
-Runs the Swift pipeline compiled to WebAssembly plus LiteRT.js inference — locally in Node and the
-browser. The model is bundled (offline; no Hugging Face download).
+## JavaScript — `@desert-ant-labs/gist`
+
+Isomorphic: the same import runs in the browser (WebAssembly + LiteRT.js) and server-side in Node
+(prebuilt native core), chosen by condition.
+
+```bash
+npm install @desert-ant-labs/gist
+```
 
 ```ts
-import { Gist, channelTopics } from "@desert-ant-labs/gist";
+import { Gist, channelTopics } from "@desert-ant-labs/gist";        // browser (wasm + LiteRT.js)
+// import { Gist } from "@desert-ant-labs/gist/native";             // Node (native core)
 
-const gist = await Gist.load();
+const gist = await Gist.load();   // downloads the model on first use, then cached
 
 await gist.classify("How to start a podcast with just your iPhone");
 // [{ slug: "technology", name: "Technology & Software", score: 0.91 },
 //  { slug: "creator-economy", name: "Creator Economy & Marketing", score: 0.44 }]
 
-await gist.scores("Why Billionaires Fear This Economist");
-// { finance: 0.98, business: 0.79, technology: 0.02, ... }   // full 26-topic distribution
+await gist.scores("Cómo invertir en fondos indexados");
+// { finance: 0.98, business: 0.41, technology: 0.02, ... }   // full 36-topic distribution
 ```
 
-Roll a channel's posts up into ranked channel-level topics (pure, no model):
+In the browser, `@litertjs/core` is a peer dependency (LiteRT.js inference). See `packages/gist-node`.
+
+## Swift — Core ML on Apple, LiteRT on Linux
+
+Add the package to `Package.swift`:
+
+```swift
+.package(url: "https://github.com/Desert-Ant-Labs/gist.git", from: "2.0.0")
+```
+
+```swift
+import Gist
+
+let gist = Gist()   // construction is cheap; the model downloads + loads on first use, cached
+
+let topics = try await gist.classify("How to start a podcast with just your iPhone")
+// [Topic(slug: "technology", name: "Technology & Software", score: 0.91), ...]
+
+let scores = try await gist.scores(of: "Cómo invertir en fondos indexados")   // [String: Double], 36 topics
+```
+
+For a fully offline build, enable the `BundledModel` package trait and construct from the resource
+bundle — no network, at the cost of a larger app:
+
+```swift
+import GistCoreMLResources          // or GistTFLiteResources on Linux/Windows
+let gist = Gist(bundle: GistCoreMLResourcesBundle.bundle)
+```
+
+## Android / Kotlin — `ai.desertant:gist`
+
+```kotlin
+dependencies {
+    implementation("ai.desertant:gist:2.0.0")
+    // implementation("ai.desertant:gist-tflite-resources:2.0.0")   // optional: bundle the model offline
+}
+```
+
+```kotlin
+import ai.desertant.gist.Gist
+
+val gist = Gist(context)            // downloads on demand into the app cache; loads on first use
+// val gist = Gist.bundled()        // fully offline; needs gist-tflite-resources
+
+val topics = gist.classify("How to start a podcast with just your iPhone")   // suspend -> List<Topic>
+val scores = gist.scores("Cómo invertir en fondos indexados")                // suspend -> Map<String, Double>
+```
+
+## Aggregating a collection
+
+Every platform ships a pure `channelTopics` roll-up (no model): fold a collection of scored posts —
+a channel, a feed, an account — into ranked collection-level topics, with optional time-decay.
 
 ```ts
 const posts = await Promise.all(
-  channelPosts.map(async (p) => ({ topics: await gist.scores(p.text), timestamp: p.createdAt })),
+  items.map(async (p) => ({ topics: await gist.scores(p.text), timestamp: p.createdAt })),
 );
 channelTopics(posts, { topN: 5 });
-// [{ slug: "technology", share: 0.34, postCount: 12 }, { slug: "creator-economy", share: 0.19, postCount: 7 }, ...]
+// [{ slug: "technology", share: 0.34, postCount: 12 }, { slug: "finance", share: 0.19, postCount: 7 }, ...]
 ```
 
-`@litertjs/core` is a peer dependency (LiteRT.js inference). See `packages/gist-node`.
+The Swift (`channelTopics(_:options:)`) and Kotlin (`channelTopics(...)`) variants take the same
+options (`topN`, `floor`, `minPosts`, `halfLifeDays`) and return the same `{ slug, share, postCount }`.
 
 ## How it works
 
-Two feature streams into a small classifier head, all pure Swift except the head:
+Two feature streams into a small classifier head — all pure host-side code except the head:
 
 - **Semantic stream** — a frozen multilingual static embedding (Model2Vec
   [`potion-multilingual-128M`](https://huggingface.co/minishlab/potion-multilingual-128M), distilled
-  from BAAI `bge-m3`), **vocab-pruned to the 7 Latin-script languages** (500k → 77k tokens) and
-  int8-quantized. Tokenized with the shared Unigram tokenizer, gathered, mean-pooled, L2-normalized.
+  from BAAI `bge-m3`), per-script pruned and int8-quantized. Tokenize (Unigram), gather the token
+  rows, mean-pool, L2-normalize. Cross-lingual by construction across **101 languages**.
 - **Lexical stream** — word + character n-grams hashed (CRC-32) into a fixed vector; recovers proper
-  nouns and exact tokens the embedding smears.
-- **Head** — a small MLP → sigmoid over the 26 topics, run through the shared `InferenceSession`
-  (LiteRT.js in Node/Web; LiteRT / Core ML on the planned mobile targets).
+  nouns and exact tokens the embedding smears (names, brands, gear).
+- **Head** — a small MLP → sigmoid over the **36 topics** (`features` [1,8448] → `topic_probs`
+  [1,36]), run through the platform engine: Core ML on Apple, LiteRT on Android/Linux, LiteRT.js on
+  the web.
 
 The tokenizer, embedding pooling, and n-grams are validated bit-for-bit against the Python training
-pipeline; the LiteRT head is numerically identical to the reference ONNX.
+pipeline; the on-device head is numerically identical to the reference ONNX.
 
 ## Model & size
 
-The model ships bundled in `packages/gist-node/model/`:
+gist is **~74 MB**, so by default it downloads once from Hugging Face
+([`desert-ant-labs/gist`](https://huggingface.co/desert-ant-labs/gist)) and is cached; offline
+bundling is opt-in (Swift `BundledModel` trait, `ai.desertant:gist-tflite-resources` on Android).
 
 | file | size | what |
-|---|---|---:|
-| `gist_embedding.i8` (+ `.json`) | ~19 MB | pruned int8 potion embedding + scale |
-| `gist.tflite` | ~3 MB | int8 LiteRT head, `features` [1,8448] → `topic_probs` [1,26] |
-| `gist_tokenizer.bin` | ~1 MB | compact Unigram vocab (shared tokenizer format) |
-| `taxonomy.json`, `gist_config.json` | tiny | the 26 topics + slugs/threshold |
+|---|---:|---|
+| `gist_embedding.i8` (+ `.json`) | ~64 MB | int8 static embedding (261,349 tokens × 256 dims), the semantic feature extractor |
+| `gist.mlmodelc` / `gist.tflite` | ~6 MB | the classifier head, `features` [1,8448] → `topic_probs` [1,36] |
+| `gist_tokenizer.bin` | ~4 MB | the multilingual Unigram tokenizer |
+| `taxonomy.json`, `gist_config.json` | tiny | the 36 topics + slugs/threshold |
 
-**Total ~23 MB.** Runs on CPU (XNNPACK) by default.
+Runs on CPU (XNNPACK) by default.
 
 ## Evaluation
 
-Top-1 accuracy on 178 human-labeled real posts (multi-label; the operative metric is a post's 2-3
-topics rolled up to channels). gist beats every on-device LLM tested at a fraction of the size:
+Recall on a held-out set of **572 human-labeled real posts (36 topics)**. Multi-label, so the
+product metric is **recall@3** (downstream aggregation consumes the top few topics); `recall@1` is
+the single best topic.
 
-| Model | Size | Top-1 | Valid outputs |
-|---|---|---:|---:|
-| Qwen2.5-7B (cloud reference) | server | 79% | 178 / 178 |
-| **gist** | **~23 MB** | **66%** | **178 / 178** |
-| Qwen3.5-2B | ~1.3 GB | 60% | 163 / 178 |
-| Qwen3.5-0.8B | ~600 MB | 44% | 172 / 178 |
-| Qwen2.5-0.5B | ~350 MB | 36% | 138 / 178 |
+| Model | Type | Size | recall@1 | recall@3 |
+|---|---|---:|---:|---:|
+| Qwen2.5-7B (cloud) | LLM zero-shot | server | **79%** | — |
+| multilingual-e5-small + head | transformer embed | 110 MB | 74% | 92% |
+| **gist** | **static embed + n-grams + MLP** | **~74 MB** | **71%** | **91%** |
+| all-MiniLM-L6-v2 + head | transformer embed | 90 MB | 68% | 90% |
+| potion + head | static embed | 30 MB | 65% | 89% |
+| mDeBERTa-v3-mnli-xnli | zero-shot NLI | 560 MB | 50% | 73% |
+
+gist is tied on recall@3 with the best small models, at a fraction of the size and one on-device
+pass — and it beats every zero-shot classifier decisively. Only a 7B cloud LLM clearly leads on
+recall@1. Full breakdown in the [model card](https://huggingface.co/desert-ant-labs/gist).
 
 ## Repository layout
 
 ```
-Package.swift              SwiftPM package (Gist core + GistWeb wasm entry)
+Package.swift              SwiftPM package (Gist core + Core ML / LiteRT resources + wasm entry)
 Sources/Gist/              the shared pure-Swift pipeline
 Sources/GistWeb/           wasm entry point (installs __GistExports)
+Sources/GistAndroid/       C ABI + JNI bridge for the Android native
+Sources/GistCoreMLResources/, GistTFLiteResources/   opt-in bundled model (offline)
 Tests/GistTests/           tokenizer + semantic/lexical stream parity tests
-packages/gist-node/        the npm package (@desert-ant-labs/gist): wasm core + LiteRT.js
-mise.toml                  build-web / test-web / test-swift
+packages/gist-node/        the npm package (@desert-ant-labs/gist): wasm core + LiteRT.js / native
+packages/gist-kotlin/      the Maven artifact (ai.desertant:gist): AAR + JNI
+mise.toml                  build / test / release tasks
 ```
 
-Build the wasm core with `mise run build-web`; run parity tests with `mise run test-swift` and the
-end-to-end suite with `mise run test-web`.
+Build the wasm core with `mise run build-web`; run the suites with `mise run test` (swift, node,
+web, android).
 
 ## Status
 
-- **Node / Web** — available (private beta).
-- **Apple (Core ML) / Android (LiteRT)** — planned; the shared Swift pipeline already targets them.
-
-Private, pre-release. Model repo: [`desert-ant-labs/gist`](https://huggingface.co/desert-ant-labs/gist).
+Released — **v2.0.0**. Apple (Core ML), Android (LiteRT), and Node/Web (WebAssembly + LiteRT.js) all
+ship from the one shared Swift pipeline.
 
 ## License
 

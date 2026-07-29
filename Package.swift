@@ -15,8 +15,8 @@ import Foundation
 //
 // The two-stream pipeline (potion embedding lookup + hashed n-grams -> MLP head)
 // runs the head through the shared InferenceSession; tokenization, embedding
-// pooling, and n-gram hashing are pure Swift. gist is a ~74 MB model, so unlike
-// emo it downloads on demand by default; enable the BundledModel trait to ship
+// pooling, and n-gram hashing are pure Swift. gist is a ~74 MB model, so it
+// downloads on demand by default; enable the BundledModel trait to ship
 // the resources for a fully offline app.
 let appleResourcePlatforms: [Platform] = [.macOS, .macCatalyst, .iOS, .tvOS, .watchOS, .visionOS]
 let bundledModelTrait = Trait(

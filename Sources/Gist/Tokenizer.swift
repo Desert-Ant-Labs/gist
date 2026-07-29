@@ -3,9 +3,9 @@ import TextNormalization
 /// XLM-R / bge-m3 SentencePiece **Unigram** tokenizer, ported to pure Swift and
 /// verified to reproduce the training tokenizer's ids exactly (NFKC normalization,
 /// no lowercasing, `▁` metaspace, Viterbi over the vocab with a `min_score − 10`
-/// unknown penalty). Backed by a compact `gist_tokenizer.bin`. Shared verbatim
-/// with the redact SDK; only the vocab differs (gist's is vocab-pruned to the 7
-/// Latin languages). gist uses the content sub-words directly (no `<s>`/`</s>`),
+/// unknown penalty). Backed by a compact `gist_tokenizer.bin` whose vocab is
+/// per-script pruned across the 101 languages gist supports. gist uses the
+/// content sub-words directly (no `<s>`/`</s>`),
 /// which it mean-pools into the semantic embedding.
 struct Tokenizer {
     struct Token {

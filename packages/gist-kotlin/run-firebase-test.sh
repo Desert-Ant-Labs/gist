@@ -23,7 +23,7 @@ export PATH="$HOME/google-cloud-sdk/bin:$PATH"
 # targetPackage is its own package), so it is both the app-under-test and the
 # test on Firebase Test Lab. The native libs (jniLibs) and the bundled model
 # (the gist-tflite-resources androidTest dependency) are inside it.
-TEST_APK="build/outputs/apk/androidTest/debug/emo-debug-androidTest.apk"
+TEST_APK="build/outputs/apk/androidTest/debug/gist-debug-androidTest.apk"
 
 echo "==> Building the instrumented-test APK (native libs already staged in jniLibs)"
 ./gradlew :assembleDebugAndroidTest -x buildSwiftNatives --no-daemon

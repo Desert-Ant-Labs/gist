@@ -1,6 +1,6 @@
-# Third-party notices - Emo
+# Third-party notices - gist
 
-The `emo` model is trained on synthetic and open data under licenses permitting
+The `gist` model is trained on synthetic and open data under licenses permitting
 commercial use and derivative works. The semantic stream is built on an open,
 distilled multilingual embedding.
 
@@ -8,8 +8,10 @@ distilled multilingual embedding.
 - **potion-multilingual-128M** (`minishlab/potion-multilingual-128M`) - a
   distilled static multilingual embedding (model2vec), used to initialize the
   pruned semantic table. **MIT**.
-- Synthetic and LLM-labeled phrase/emoji data generated in the private
-  `emo-training` repository. Emoji labels follow the Unicode emoji data.
+- **bge-m3** (`BAAI/bge-m3`) - the teacher the static embedding was distilled
+  from. **MIT**.
+- Synthetic and LLM-labeled topic data generated in the private `gist-training`
+  repository, labeled by open instruct LLMs (Apache/MIT).
 
 No non-commercial or unlicensed data is used.
 
