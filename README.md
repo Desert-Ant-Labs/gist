@@ -49,7 +49,7 @@ In the browser, `@litertjs/core` is a peer dependency (LiteRT.js inference). See
 Add the package to `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/Desert-Ant-Labs/gist.git", from: "2.0.0")
+.package(url: "https://github.com/Desert-Ant-Labs/gist.git", from: "2.0.1")
 ```
 
 ```swift
@@ -75,8 +75,8 @@ let gist = Gist(bundle: GistCoreMLResourcesBundle.bundle)
 
 ```kotlin
 dependencies {
-    implementation("ai.desertant:gist:2.0.0")
-    // implementation("ai.desertant:gist-tflite-resources:2.0.0")   // optional: bundle the model offline
+    implementation("ai.desertant:gist:2.0.1")
+    // implementation("ai.desertant:gist-tflite-resources:2.0.1")   // optional: bundle the model offline
 }
 ```
 

@@ -4,8 +4,8 @@
 // description. `mise run build-android` -> `mise run android-natives` builds the
 // prebuilt Swift JNI into src/main/jniLibs before packaging.
 plugins { id("ai.desertant.model-sdk") version "0.4.2" }
-version = "2.0.0"
+version = "2.0.1"
 desertAntSdk {
-    description = "On-device multilingual emoji suggestion for Android: turns a short task, calendar " +
-        "entry, or message into ranked emoji, fully on device."
+    description = "On-device multilingual content topic tagging for Android: turns a title, post, or " +
+        "description into ranked topics from a 36-topic taxonomy across 101 languages, fully on device."
 }

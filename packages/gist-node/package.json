@@ -1,6 +1,6 @@
 {
   "name": "@desert-ant-labs/gist",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "On-device content topic tagging for JavaScript. Multi-label, 36 topics, 101 languages. Runs in the browser (WebAssembly + LiteRT.js) and server-side in Node (native), from one import.",
   "type": "module",
   "license": "SEE LICENSE IN LICENSE.md",
