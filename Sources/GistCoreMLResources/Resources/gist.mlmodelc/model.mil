@@ -1,0 +1,14 @@
+program(1.0)
+[buildInfo = dict<tensor<string, []>, tensor<string, []>>({{"coremlc-component-MIL", "3520.4.1"}, {"coremlc-version", "3520.5.1"}, {"coremltools-component-torch", "2.13.0"}, {"coremltools-source-dialect", "TorchScript"}, {"coremltools-version", "9.0"}})]
+{
+    func main<ios16>(tensor<fp16, [1, 8448]> features) {
+            tensor<fp16, [384, 8448]> var_0_weight_to_fp16 = const()[name = tensor<string, []>("op_0_weight_to_fp16"), val = tensor<fp16, [384, 8448]>(BLOBFILE(path = tensor<string, []>("@model_path/weights/weight.bin"), offset = tensor<uint64, []>(64)))];
+            tensor<fp16, [384]> var_0_bias_to_fp16 = const()[name = tensor<string, []>("op_0_bias_to_fp16"), val = tensor<fp16, [384]>(BLOBFILE(path = tensor<string, []>("@model_path/weights/weight.bin"), offset = tensor<uint64, []>(6488192)))];
+            tensor<fp16, [1, 384]> linear_0_cast_fp16 = linear(bias = var_0_bias_to_fp16, weight = var_0_weight_to_fp16, x = features)[name = tensor<string, []>("linear_0_cast_fp16")];
+            tensor<fp16, [1, 384]> input_5_cast_fp16 = relu(x = linear_0_cast_fp16)[name = tensor<string, []>("input_5_cast_fp16")];
+            tensor<fp16, [36, 384]> var_3_weight_to_fp16 = const()[name = tensor<string, []>("op_3_weight_to_fp16"), val = tensor<fp16, [36, 384]>(BLOBFILE(path = tensor<string, []>("@model_path/weights/weight.bin"), offset = tensor<uint64, []>(6489024)))];
+            tensor<fp16, [36]> var_3_bias_to_fp16 = const()[name = tensor<string, []>("op_3_bias_to_fp16"), val = tensor<fp16, [36]>(BLOBFILE(path = tensor<string, []>("@model_path/weights/weight.bin"), offset = tensor<uint64, []>(6516736)))];
+            tensor<fp16, [1, 36]> linear_1_cast_fp16 = linear(bias = var_3_bias_to_fp16, weight = var_3_weight_to_fp16, x = input_5_cast_fp16)[name = tensor<string, []>("linear_1_cast_fp16")];
+            tensor<fp16, [1, 36]> topic_probs = sigmoid(x = linear_1_cast_fp16)[name = tensor<string, []>("op_14_cast_fp16")];
+        } -> (topic_probs);
+}

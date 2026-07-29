@@ -1,57 +1,21 @@
-/** A predicted topic and its probability. */
+// Public types for @desert-ant-labs/gist. The same API on the browser
+// (WebAssembly + LiteRT.js) and Node (native) entry points.
+
+/** A single predicted topic and its probability. */
 export interface Topic {
-  /** Taxonomy slug, e.g. `"technology"`. */
+  /** The taxonomy slug, e.g. `"technology"`. */
   slug: string;
-  /** Human-readable name, e.g. `"Technology & Software"`. */
+  /** The human-readable name, e.g. `"Technology & Software"`. */
   name: string;
-  /** Probability in `0..1`. */
+  /** The model's probability, `0..1`. */
   score: number;
 }
 
-/** Options for `classify`. */
-export interface ClassifyOptions {
-  /** Max topics to return. Default 3. */
-  topK?: number;
-  /** Override the tuned probability threshold. */
-  threshold?: number;
-}
-
-/** How the model is loaded. Bundled by default (offline); the repo/revision are pinned. */
-export interface LoadOptions {
-  /** An explicit model directory (adopt files there, else download). Omit to use the bundled model. */
-  directory?: string;
-  /** Download progress in `[0, 1]`. */
-  onProgress?: (fraction: number) => void;
-  /** Bring-your-own LiteRT.js module (the `@litertjs/core` namespace). */
-  litert?: unknown;
-  /** URL/path to the LiteRT.js Wasm directory. */
-  litertWasmDir?: string;
-  /** LiteRT.js accelerator: `"wasm"` (default), `"webgpu"`, or `"webnn"`. */
-  accelerator?: "wasm" | "webgpu" | "webnn";
-}
-
-/**
- * On-device multi-label content topic tagging (26 topics, 7 languages) with local
- * WebAssembly and LiteRT.js inference. Create one with `await Gist.load()` and reuse it.
- *
- * ```ts
- * const gist = await Gist.load();
- * await gist.classify("How to start a podcast with your iPhone");
- * await gist.scores("Why Billionaires Fear This Economist");
- * ```
- */
-export declare class Gist {
-  static load(options?: LoadOptions): Promise<Gist>;
-  /** Ranked topics above the tuned threshold (the top topic is always returned). */
-  classify(text: string, options?: ClassifyOptions): Promise<Topic[]>;
-  /** The full 26-topic probability distribution (slug -> probability). */
-  scores(text: string): Promise<Record<string, number>>;
-}
-
-/** One post's topic scores (from `Gist.scores`), optionally timestamped. */
+/** One post's topic scores (slug -> probability), for channel roll-up. */
 export interface PostTopics {
   topics: Record<string, number>;
-  timestamp?: number | Date;
+  /** Optional epoch-milliseconds timestamp; enables recency weighting. */
+  timestampMillis?: number;
 }
 
 /** A channel-level topic in the ranked roll-up. */
@@ -63,15 +27,51 @@ export interface ChannelTopic {
   postCount: number;
 }
 
-/** Options for `channelTopics`. */
 export interface RollupOptions {
   topN?: number;
   floor?: number;
   minPosts?: number;
   halfLifeDays?: number;
   touch?: number;
-  now?: number;
+  nowMillis?: number;
 }
 
-/** Aggregate a channel's posts into a ranked list of channel-level topics. Pure, no model. */
-export declare function channelTopics(posts: PostTopics[], options?: RollupOptions): ChannelTopic[];
+export interface LoadOptions {
+  /** Progress callback for the model download, `0..1`. */
+  onProgress?: (fraction: number) => void;
+  /** Adopt self-hosted model files from this directory (Node, offline). */
+  directory?: string;
+  /** Base cache directory the managed layout lives under (Node). */
+  cacheRoot?: string;
+  /** Fetch self-hosted model files from this base URL (browser, offline). */
+  modelBaseUrl?: string;
+  /** LiteRT.js accelerator: `"wasm"` (default) or `"webgpu"` (browser). */
+  accelerator?: "wasm" | "webgpu";
+  /** Bring your own `@litertjs/core` module (browser path). */
+  litert?: unknown;
+  /** Custom LiteRT.js wasm asset directory (browser path). */
+  litertWasmDir?: string;
+}
+
+export interface ClassifyOptions {
+  /** Maximum number of topics to return (default 3). */
+  topK?: number;
+  /** Override the model's tuned decision threshold. */
+  threshold?: number;
+}
+
+/** On-device, multi-label content topic tagging (36 topics, 101 languages). */
+export class Gist {
+  /** Load the model and return a ready tagger. Create once and reuse. */
+  static load(options?: LoadOptions): Promise<Gist>;
+  /** The full 36-topic probability distribution for `text` (`{ slug: prob }`). */
+  scores(text: string): Promise<Record<string, number>>;
+  /** The ranked topics for `text` above the model's tuned threshold. */
+  classify(text: string, options?: ClassifyOptions): Promise<Topic[]>;
+  /** Free native resources (no-op on the WebAssembly runtime). */
+  dispose(): void;
+}
+
+/** Aggregate a channel's per-post topic scores into a ranked list of channel
+ *  topics. Pure and deterministic — no model. */
+export function channelTopics(posts: PostTopics[], options?: RollupOptions): ChannelTopic[];

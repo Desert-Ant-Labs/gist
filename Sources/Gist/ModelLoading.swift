@@ -38,6 +38,18 @@ public struct ModelAssets: Sendable {
                   session: try inferenceSession(modelBytes: modelBytes))
     }
 
+    /// Bindings entry point: load the head from a file path (the Node
+    /// server-side native's bundled path). `inferenceSession(modelPath:)` picks
+    /// Core ML on Apple hosts (`.mlmodelc`) and LiteRT on Linux (`.tflite`), so
+    /// one call covers both; it is mmap-based, sidestepping the from-bytes
+    /// buffer-ownership pitfall.
+    public init(tokenizer: [UInt8], embedding: [UInt8], embeddingMetaJSON: String,
+                configJSON: String, taxonomyJSON: String, modelPath: String) throws {
+        self.init(tokenizer: tokenizer, embedding: embedding, embeddingMetaJSON: embeddingMetaJSON,
+                  configJSON: configJSON, taxonomyJSON: taxonomyJSON,
+                  session: try inferenceSession(modelPath: modelPath))
+    }
+
     init(tokenizer: [UInt8], embedding: [UInt8], embeddingMetaJSON: String,
          configJSON: String, taxonomyJSON: String, session: any InferenceSession) {
         self.tokenizer = tokenizer
@@ -62,10 +74,10 @@ public struct ModelAssets: Sendable {
 }
 
 public extension Gist {
-    /// The published model repository (private).
+    /// The published model repository.
     static var modelRepo: String { "desert-ant-labs/gist" }
-    /// The model revision this SDK is built against (pinned).
-    static var modelRevision: String { "main" }
+    /// The model revision this SDK is built against (pinned; not configurable).
+    static var modelRevision: String { "v2.0.0" }
 
     internal static func resolvedAssets(
         directory: String?, cacheRoot: String? = nil,
@@ -92,3 +104,49 @@ public extension Gist {
         )
     }
 }
+
+// MARK: opt-in offline bundling (Apple / Linux)
+
+// gist is ~74 MB, so it downloads on demand by default. For a fully offline app,
+// enable the `BundledModel` package trait and construct from the resource bundle.
+// `Bundle` is a Foundation type, so this initializer only exists where SwiftPM
+// resource bundles do.
+#if canImport(CoreML) || os(Linux)
+import Foundation
+import ModelResources
+
+public extension Gist {
+    /// Load the model from an explicit resource bundle, fully offline. Requires
+    /// the `BundledModel` package trait (which links the resource target).
+    ///
+    /// ```swift
+    /// import GistCoreMLResources   // or GistTFLiteResources on Linux/Windows
+    /// let gist = Gist(bundle: GistCoreMLResourcesBundle.bundle)
+    /// ```
+    convenience init(bundle: Bundle) {
+        self.init(
+            resolve: { _ in try ModelAssets.gist(bundle: bundle) },
+            isAvailable: { true }
+        )
+    }
+}
+
+extension ModelAssets {
+    /// Build from a resource bundle: the sidecars plus this platform's session
+    /// for the bundled head artifact.
+    static func gist(bundle: Bundle) throws -> ModelAssets {
+        let r = BundledResources(bundle)
+        do {
+            return try ModelAssets(
+                tokenizer: try r.read(GistModel.tokenizer),
+                embedding: try r.read(GistModel.embedding),
+                embeddingMetaJSON: try r.readString(GistModel.embeddingMeta),
+                configJSON: try r.readString(GistModel.config),
+                taxonomyJSON: try r.readString(GistModel.taxonomy),
+                modelPath: try r.path(GistModel.artifact))
+        } catch {
+            throw GistError.resourceMissing
+        }
+    }
+}
+#endif

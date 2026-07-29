@@ -1,64 +1,43 @@
-# Build/test entry points for gist. Focus for the beta is the Node/web package:
-#
-#   mise run build-web   # WebAssembly Swift core -> packages/gist-node/dist
-#   mise run test-web     # the npm suite for packages/gist-node
-#   mise run test-swift   # the SwiftPM pipeline suite (tokenizer + streams parity)
-#
-# The wasm SDK auto-installs on first run (matched to the pinned toolchain).
-# Apple (Core ML) / Android (LiteRT) targets are deferred.
-
+# Build/test/publish for gist. The shared build/publish/version logic lives in
+# desert-ant-core's model-SDK catalog (sdk-build/model-sdk.toml, pinned below);
+# this file supplies gist's config and its model-specific test tasks. See the
+# catalog README for the full task list and the mise.local.toml secret setup.
 [tools]
 swift = "6.3.3"
 
-[tasks.test-swift]
-description = "SwiftPM test suite (tokenizer + semantic/lexical stream parity)"
-dir = "{{ config_root }}"
-run = "swift test"
+[vars]
+model = "gist"
+product = "Gist"
+# Staged into the AAR/Node resources. gist ships a head artifact plus the shared
+# sidecars the pure-Swift pipeline reads (embedding, tokenizer, config, taxonomy).
+tflite_files = "gist.tflite gist_config.json gist_embedding.i8 gist_embedding.json gist_tokenizer.bin taxonomy.json"
 
-[tasks.build-web]
-description = "Build the WebAssembly core into packages/gist-node/dist"
-dir = "{{ config_root }}"
-shell = "bash -c"
-tools = { "aqua:WebAssembly/binaryen" = "130" }  # wasm-opt
+[env]
+DAL_GPU = ""
+
+[task_config]
+includes = ["git::https://github.com/Desert-Ant-Labs/desert-ant-core.git//sdk-build/model-sdk.toml?ref=v0.5.5"]
+
+# Test harnesses are model-specific, so they stay local (test-swift and
+# test-android come from the catalog).
+[tasks.test]
+description = "Run every test suite (swift + node + web + android)"
+depends = ["test-swift", "test-node", "test-web", "test-android"]
+
+[tasks.test-node]
+description = "Server-side Node test suite for packages/gist-node (native core via the gist_* C ABI)"
+dir = "{{ config_root }}/packages/gist-node"
+depends = ["node-natives"]
+tools = { node = "22" }
 run = """
 set -euo pipefail
-OUT=.build/wasm-package
-DIST=packages/gist-node/dist
-
-SWIFT_VER=$(swift --version 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i ~ /^[0-9]/){print $i; exit}}')
-[ -n "$SWIFT_VER" ] || { echo "error: could not determine the Swift version" >&2; exit 1; }
-SDK=${WASM_SDK:-swift-$SWIFT_VER-RELEASE_wasm}
-
-have_bundle() { for d in "$HOME/.swiftpm/swift-sdks" "$HOME/Library/org.swift.swiftpm/swift-sdks"; do [ -d "$d/$1" ] && return 0; done; return 1; }
-if ! have_bundle "$SDK.artifactbundle"; then
-    echo "Installing the Swift WebAssembly SDK $SWIFT_VER (one-time)..."
-    tmp=$(mktemp -d)
-    curl -fSL -o "$tmp/sdk.tar.gz" "https://download.swift.org/swift-$SWIFT_VER-release/wasm-sdk/swift-$SWIFT_VER-RELEASE/$SDK.artifactbundle.tar.gz"
-    swift sdk install "$tmp/sdk.tar.gz"
-    rm -rf "$tmp"
-fi
-
-swift package -Xswiftc -Osize --swift-sdk "$SDK" --allow-writing-to-package-directory js --product GistWeb -c release --output "$OUT"
-
-if command -v wasm-opt >/dev/null; then
-    wasm-opt -Oz --enable-bulk-memory --enable-nontrapping-float-to-int --enable-sign-ext --enable-reference-types --strip-debug --strip-producers "$OUT/GistWeb.wasm" -o "$OUT/GistWeb.wasm"
-else
-    echo "warning: wasm-opt not found; shipping unoptimized wasm (~3x larger)" >&2
-fi
-
-rm -rf "$DIST"
-mkdir -p "$DIST"
-cp "$OUT"/GistWeb.wasm "$OUT"/index.js "$OUT"/index.d.ts "$OUT"/instantiate.js "$OUT"/instantiate.d.ts "$OUT"/runtime.js "$OUT"/runtime.d.ts "$DIST/"
-cp -r "$OUT"/platforms "$DIST/platforms"
-cp LICENSE.md packages/gist-node/LICENSE.md 2>/dev/null || true
-
-ls -la "$DIST/GistWeb.wasm"
-echo "done: packages/gist-node is ready"
+npm install --no-save --no-package-lock koffi@^2.9.0 >/dev/null 2>&1 || npm install >/dev/null 2>&1 || true
+node --test test/gist.test.mjs
 """
 
 [tasks.test-web]
-description = "npm test suite for packages/gist-node (needs @litertjs/core)"
-dir = "{{ config_root }}/packages/gist-node"
+description = "Headless-Chromium browser E2E for packages/gist-node (WebAssembly + LiteRT.js)"
+dir = "{{ config_root }}/Examples/GistWasmExample"
 depends = ["build-web"]
 tools = { node = "22" }
-run = "npm test"
+run = "npm install && npm run browser-example"

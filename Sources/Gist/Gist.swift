@@ -27,7 +27,7 @@ public enum GistError: MessageError, Sendable {
 /// On-device, multi-label content topic tagging.
 ///
 /// `Gist` tags a post (title, or title + description) with topics from a fixed
-/// 26-topic taxonomy across 7 languages, fully on device. Create one once and reuse.
+/// 36-topic taxonomy across 101 languages, fully on device. Create one once and reuse.
 ///
 /// ```swift
 /// let gist = Gist()
@@ -76,7 +76,7 @@ public final class Gist: @unchecked Sendable {
     @_spi(GistBindings)
     public func waitUntilLoaded() async throws { _ = try await loader.value() }
 
-    /// The full 26-topic probability distribution for `text` (slug -> probability).
+    /// The full 36-topic probability distribution for `text` (slug -> probability).
     /// Use these for channel roll-up (see `channelTopics`).
     public func scores(of text: String) async throws -> [String: Double] {
         try await loader.value().scores(text)

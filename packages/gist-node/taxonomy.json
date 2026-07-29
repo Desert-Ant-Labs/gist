@@ -1,0 +1,257 @@
+{
+  "version": 2,
+  "topics": [
+    {
+      "slug": "arts-culture",
+      "name": "Arts & Culture",
+      "description": "Visual art, design, theatre, dance, and cultural criticism.",
+      "iab": "Arts, Entertainment",
+      "apple": "Arts"
+    },
+    {
+      "slug": "business",
+      "name": "Business & Entrepreneurship",
+      "description": "Starting and running companies, startups, strategy, and management.",
+      "iab": "Business",
+      "apple": "Business"
+    },
+    {
+      "slug": "finance",
+      "name": "Personal Finance & Investing",
+      "description": "Budgeting, saving, investing, markets, crypto, and money decisions.",
+      "iab": "Personal Finance",
+      "apple": "Business"
+    },
+    {
+      "slug": "career",
+      "name": "Careers & Productivity",
+      "description": "Jobs, hiring, workplace skills, remote work, and getting things done.",
+      "iab": "Careers",
+      "apple": "Business"
+    },
+    {
+      "slug": "technology",
+      "name": "Technology & Software",
+      "description": "Software, gadgets, AI, programming, cloud infrastructure, engineering, and the tech industry.",
+      "iab": "Technology & Computing",
+      "apple": "Technology"
+    },
+    {
+      "slug": "science",
+      "name": "Science",
+      "description": "Research, space, biology, physics, and how the world works.",
+      "iab": "Science",
+      "apple": "Science"
+    },
+    {
+      "slug": "health-fitness",
+      "name": "Health & Fitness",
+      "description": "Exercise, nutrition, mental health, medicine, and wellbeing.",
+      "iab": "Health",
+      "apple": "Health & Fitness"
+    },
+    {
+      "slug": "food-drink",
+      "name": "Food & Cooking",
+      "description": "Recipes, restaurants, cooking technique, coffee, and drinks.",
+      "iab": "Food & Drink",
+      "apple": "Leisure"
+    },
+    {
+      "slug": "travel",
+      "name": "Travel",
+      "description": "Destinations, trip planning, adventure travel, and life on the road.",
+      "iab": "Travel",
+      "apple": "Society & Culture"
+    },
+    {
+      "slug": "education",
+      "name": "Education & Learning",
+      "description": "Teaching, studying, courses, languages, and how to learn.",
+      "iab": "Education",
+      "apple": "Education"
+    },
+    {
+      "slug": "news-politics",
+      "name": "News & Politics",
+      "description": "Current events, policy, elections, and political commentary.",
+      "iab": "News & Politics",
+      "apple": "News"
+    },
+    {
+      "slug": "society-culture",
+      "name": "Society & Culture",
+      "description": "Social issues, identity, philosophy, and everyday culture.",
+      "iab": "Society",
+      "apple": "Society & Culture"
+    },
+    {
+      "slug": "comedy",
+      "name": "Comedy & Entertainment",
+      "description": "Humor, pop culture, celebrity, and light entertainment.",
+      "iab": "Pop Culture",
+      "apple": "Comedy"
+    },
+    {
+      "slug": "music",
+      "name": "Music",
+      "description": "Making music, artists, genres, gear, and the music industry.",
+      "iab": "Music & Audio",
+      "apple": "Music"
+    },
+    {
+      "slug": "film-tv",
+      "name": "Film & TV",
+      "description": "Movies, television, streaming, reviews, and filmmaking.",
+      "iab": "Movies",
+      "apple": "TV & Film"
+    },
+    {
+      "slug": "gaming",
+      "name": "Video Gaming",
+      "description": "Games, esports, game design, and gaming culture.",
+      "iab": "Video Gaming",
+      "apple": "Leisure"
+    },
+    {
+      "slug": "sports",
+      "name": "Sports",
+      "description": "Teams, athletes, matches, training, and sports analysis.",
+      "iab": "Sports",
+      "apple": "Sports"
+    },
+    {
+      "slug": "lifestyle-fashion",
+      "name": "Lifestyle & Fashion",
+      "description": "Style, fashion, trends, and everyday lifestyle content.",
+      "iab": "Style & Fashion",
+      "apple": "Society & Culture"
+    },
+    {
+      "slug": "home-garden",
+      "name": "Home, Garden & DIY",
+      "description": "Home improvement, interior decor, gardening, houseplants, and hands-on DIY projects.",
+      "iab": "Home & Garden",
+      "apple": "Leisure"
+    },
+    {
+      "slug": "parenting-family",
+      "name": "Family & Parenting",
+      "description": "Raising kids, family life, pregnancy, and parenting.",
+      "iab": "Family & Relationships",
+      "apple": "Kids & Family"
+    },
+    {
+      "slug": "relationships",
+      "name": "Relationships & Dating",
+      "description": "Dating, romance, friendship, and interpersonal advice.",
+      "iab": "Family & Relationships",
+      "apple": "Society & Culture"
+    },
+    {
+      "slug": "self-improvement",
+      "name": "Self-Improvement",
+      "description": "Motivation, habits, mindset, and personal growth.",
+      "iab": "Healthy Living",
+      "apple": "Education"
+    },
+    {
+      "slug": "spirituality-religion",
+      "name": "Religion & Spirituality",
+      "description": "Faith, meditation, mindfulness, and spiritual practice.",
+      "iab": "Religion & Spirituality",
+      "apple": "Religion & Spirituality"
+    },
+    {
+      "slug": "history",
+      "name": "History",
+      "description": "Historical events, figures, and how the past shaped now.",
+      "iab": "Society",
+      "apple": "History"
+    },
+    {
+      "slug": "true-crime",
+      "name": "True Crime",
+      "description": "Crimes, investigations, mysteries, and the justice system.",
+      "iab": "News & Politics",
+      "apple": "True Crime"
+    },
+    {
+      "slug": "creator-economy",
+      "name": "Creator Economy & Marketing",
+      "description": "Growing an audience, monetizing content, and online marketing.",
+      "iab": "Business & Finance",
+      "apple": "Business"
+    },
+    {
+      "slug": "pets-animals",
+      "name": "Pets & Animals",
+      "description": "Dogs, cats, pet care and training, and companion animals.",
+      "iab": "Pets",
+      "apple": "Leisure"
+    },
+    {
+      "slug": "automotive",
+      "name": "Automotive",
+      "description": "Cars, EVs, reviews, repair, and motoring culture.",
+      "iab": "Automotive",
+      "apple": "Leisure"
+    },
+    {
+      "slug": "beauty",
+      "name": "Beauty & Skincare",
+      "description": "Skincare, makeup, haircare, fragrance, and grooming.",
+      "iab": "Style & Fashion",
+      "apple": "Arts"
+    },
+    {
+      "slug": "shopping-deals",
+      "name": "Shopping & Deals",
+      "description": "Product reviews, hauls, unboxings, deals, and gift guides.",
+      "iab": "Shopping",
+      "apple": "Business"
+    },
+    {
+      "slug": "outdoors-nature",
+      "name": "Outdoors & Nature",
+      "description": "Hiking, camping, fishing, climbing, and the natural world.",
+      "iab": "Hobbies & Interests",
+      "apple": "Sports"
+    },
+    {
+      "slug": "books-literature",
+      "name": "Books & Literature",
+      "description": "Fiction, nonfiction, book reviews, poetry, and the craft of writing.",
+      "iab": "Books and Literature",
+      "apple": "Arts"
+    },
+    {
+      "slug": "real-estate",
+      "name": "Real Estate",
+      "description": "Home buying, property investing, mortgages, renting, and market trends.",
+      "iab": "Real Estate",
+      "apple": "Business"
+    },
+    {
+      "slug": "photography-video",
+      "name": "Photography & Video",
+      "description": "Photography and videography technique, cameras and gear, and editing.",
+      "iab": "Hobbies & Interests",
+      "apple": "Arts"
+    },
+    {
+      "slug": "crafts-hobbies",
+      "name": "Crafts & Hobbies",
+      "description": "Knitting, woodworking, model-making, collecting, and hands-on crafts.",
+      "iab": "Hobbies & Interests",
+      "apple": "Leisure"
+    },
+    {
+      "slug": "law",
+      "name": "Law & Justice",
+      "description": "Legal education, rights, how the legal system works, and legal commentary (not crimes/cases, which are true-crime, nor policy/elections, which are news-politics).",
+      "iab": "Law, Government & Politics",
+      "apple": "Government"
+    }
+  ]
+}

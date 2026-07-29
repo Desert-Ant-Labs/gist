@@ -98,8 +98,13 @@ struct Tokenizer {
             parsedIndex[piece] = id
             maximumLength = max(maximumLength, piece.unicodeScalars.count)
         }
-        guard offset == bytes.count, parsedIndex.count == count,
-              (0..<count).contains(unk) else { return nil }
+        // `parsedIndex` may be slightly smaller than `count`: Swift `String`
+        // keys compare by Unicode canonical equivalence, so a few canonically-
+        // equivalent pieces in the 101-language vocab collapse to one key. That
+        // is correct here — input is NFKC-normalized before matching, so those
+        // pieces are indistinguishable anyway. `offset == bytes.count` is the
+        // real integrity check.
+        guard offset == bytes.count, (0..<count).contains(unk) else { return nil }
 
         unkID = unk
         bosID = bos

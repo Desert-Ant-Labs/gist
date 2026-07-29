@@ -38,7 +38,7 @@ final class Model: @unchecked Sendable {
         return Dictionary(uniqueKeysWithValues: tax.topics.map { ($0.slug, $0.name) })
     }
 
-    /// Full 26-topic probability distribution for `text`.
+    /// Full 36-topic probability distribution for `text`.
     func scores(_ text: String) async throws -> [String: Double] {
         let ids = tokenizer.encode(text)
         var feats = embedding.pool(ids: ids)
