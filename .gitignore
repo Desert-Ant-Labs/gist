@@ -6,6 +6,9 @@
 # Built wasm output (rebuilt by `mise run build-web`)
 packages/gist-node/dist/
 
+# Prebuilt native cores (staged by `mise run node-natives`, published by CI)
+packages/gist-node/native/
+
 # node
 packages/gist-node/node_modules/
 node_modules/

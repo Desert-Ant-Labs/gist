@@ -18,6 +18,13 @@ import taxonomy from "./taxonomy.json" with { type: "json" };
 const PACKAGE_NAME = "@desert-ant-labs/gist";
 const NAMES = Object.fromEntries(taxonomy.topics.map((t) => [t.slug, t.name]));
 
+// The pinned model repo + revision (kept in sync with `modelRevision` in the
+// Swift core). The English-only variant lives under `en/`; in the browser it is
+// fetched from there directly (the wasm managed path serves the multilingual
+// default), so selecting it needs no runtime change.
+const MODEL_BASE = "https://huggingface.co/desert-ant-labs/gist/resolve/v2.1.0";
+const EN_MODEL_BASE = `${MODEL_BASE}/en`;
+
 // The wasm core instantiates at import time (top-level await); the model is only
 // wired in load(). The build-time-selected platform seam owns whatever is node-
 // or browser-specific about instantiation.
@@ -41,9 +48,16 @@ export class Gist {
    * runtime (Cache API / IndexedDB in the browser). Pass a `modelBaseUrl` to
    * fetch self-hosted files from your own origin instead. The repo and revision
    * are pinned to the SDK.
+   *
+   * Pass `variant: "english"` for the compact English-only model (~15 MB;
+   * English/Latin text only). The default `"multilingual"` covers 101 languages.
    */
   static async load(options = {}) {
     const resolved = options;
+    const variant = resolved.variant === "english" || resolved.variant === "en" ? "english" : "multilingual";
+    // English is served from the model repo's `en/` folder; multilingual uses the
+    // runtime's managed download. An explicit `modelBaseUrl` always wins.
+    const modelBaseUrl = resolved.modelBaseUrl ?? (variant === "english" ? EN_MODEL_BASE : null);
     assertBrowserRuntime({ packageName: PACKAGE_NAME, litert: resolved.litert });
     const lrt = await loadLiteRt({
       litert: resolved.litert,
@@ -63,8 +77,8 @@ export class Gist {
     });
 
     const onProgress = typeof resolved.onProgress === "function" ? resolved.onProgress : undefined;
-    if (resolved.modelBaseUrl != null) {
-      const files = await fetchModelFrom(resolved.modelBaseUrl);
+    if (modelBaseUrl != null) {
+      const files = await fetchModelFrom(modelBaseUrl);
       setModel(await loadAndCompile(files.modelBytes, { accelerator }));
       await core.loadBundled(files);
       onProgress?.(1);

@@ -43,15 +43,18 @@ public final class Gist: @unchecked Sendable {
     /// Creates a tagger. Construction starts no download; the model loads on the
     /// first `classify`/`scores`/`download`, off your calling thread. With no
     /// `directory`, a managed cache location is used.
-    public convenience init(directory: String? = nil) {
-        self.init(directory: directory, cacheRoot: nil)
+    ///
+    /// `variant` selects the model: `.multilingual` (default, 101 languages) or
+    /// `.english` (the ~15 MB English-only build; English/Latin text only).
+    public convenience init(variant: GistVariant = .multilingual, directory: String? = nil) {
+        self.init(variant: variant, directory: directory, cacheRoot: nil)
     }
 
     @_spi(GistBindings)
-    public convenience init(directory: String?, cacheRoot: String?) {
+    public convenience init(variant: GistVariant = .multilingual, directory: String?, cacheRoot: String?) {
         self.init(
-            resolve: { try await Gist.resolvedAssets(directory: directory, cacheRoot: cacheRoot, progress: $0) },
-            isAvailable: { Gist.isModelAvailable(directory: directory, cacheRoot: cacheRoot) }
+            resolve: { try await Gist.resolvedAssets(variant: variant, directory: directory, cacheRoot: cacheRoot, progress: $0) },
+            isAvailable: { Gist.isModelAvailable(variant: variant, directory: directory, cacheRoot: cacheRoot) }
         )
     }
 

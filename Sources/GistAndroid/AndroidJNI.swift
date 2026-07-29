@@ -34,6 +34,23 @@ public func GistNative_create(_ env: UnsafeMutablePointer<JNIEnv?>, _ cls: jclas
     }
 }
 
+/// Create a tagger for a model variant: `variant` is `"english"`/`"en"` for the
+/// English-only build, else (NULL/empty) the multilingual default. Same
+/// cache/download semantics as `create`.
+@_cdecl("Java_ai_desertant_gist_GistNative_createVariant")
+public func GistNative_createVariant(_ env: UnsafeMutablePointer<JNIEnv?>, _ cls: jclass?,
+                                     _ variant: jbyteArray?, _ cacheRoot: jbyteArray?, _ directory: jbyteArray?) -> jlong {
+    installHostBridge(env, cls)
+    let variantBytes = hostCopyBytes(env, variant).flatMap { $0.isEmpty ? nil : Array($0) }
+    let root = hostCopyBytes(env, cacheRoot).flatMap { $0.isEmpty ? nil : Array($0) }
+    let dir = hostCopyBytes(env, directory).flatMap { $0.isEmpty ? nil : Array($0) }
+    return withHostCText(variantBytes) { vPtr in
+        withHostCText(root) { rootPtr in
+            withHostCText(dir) { dirPtr in handle(gist_create_variant(vPtr, rootPtr, dirPtr)) }
+        }
+    }
+}
+
 /// Create a tagger from bundled model bytes (the gist-tflite-resources path):
 /// the tokenizer, the int8 embedding, the three JSON sidecars, and the LiteRT head.
 @_cdecl("Java_ai_desertant_gist_GistNative_createBundled")

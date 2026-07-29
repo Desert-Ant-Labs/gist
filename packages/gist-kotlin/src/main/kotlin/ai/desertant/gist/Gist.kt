@@ -36,14 +36,20 @@ class GistException(message: String) : Exception(message)
  * gist.close()
  * ```
  */
+/** Which published model to load. [MULTILINGUAL] covers 36 topics across 101
+ *  languages (~74 MB); [ENGLISH] is the same 36 topics and head at ~15 MB, for
+ *  English/Latin text only (other scripts are not covered). */
+enum class GistVariant(internal val id: String) { MULTILINGUAL("multilingual"), ENGLISH("english") }
+
 class Gist private constructor(private val handle: Long) : AutoCloseable {
     /**
-     * A tagger. gist is ~74 MB, so with no [directory] it downloads on demand
-     * into the managed cache. Supplying [directory] adopts your files there (or
-     * downloads into it). Construction is cheap; the model loads on first use.
+     * A tagger. gist is ~74 MB (or ~15 MB for [GistVariant.ENGLISH]), so with no
+     * [directory] it downloads on demand into the managed cache. Supplying
+     * [directory] adopts your files there (or downloads into it). Construction is
+     * cheap; the model loads on first use.
      */
-    constructor(context: android.content.Context, directory: String? = null)
-        : this(createHandle(context.cacheDir.absolutePath, directory))
+    constructor(context: android.content.Context, directory: String? = null, variant: GistVariant = GistVariant.MULTILINGUAL)
+        : this(createHandle(context.cacheDir.absolutePath, directory, variant))
 
     companion object {
         /** The model's tuned decision threshold (pinned; from gist_config.json). */
@@ -63,10 +69,12 @@ class Gist private constructor(private val handle: Long) : AutoCloseable {
             return Gist(handle)
         }
 
-        private fun createHandle(cacheRoot: String, directory: String?): Long {
+        private fun createHandle(cacheRoot: String, directory: String?, variant: GistVariant): Long {
             GistNative.ensureLoaded()
-            val handle = GistNative.create(
-                cacheRoot.toByteArray(Charsets.UTF_8), directory?.toByteArray(Charsets.UTF_8))
+            val root = cacheRoot.toByteArray(Charsets.UTF_8)
+            val dir = directory?.toByteArray(Charsets.UTF_8)
+            val handle = if (variant == GistVariant.MULTILINGUAL) GistNative.create(root, dir)
+                else GistNative.createVariant(variant.id.toByteArray(Charsets.UTF_8), root, dir)
             if (handle == 0L) throw GistException("failed to create Gist")
             return handle
         }

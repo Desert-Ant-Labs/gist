@@ -30,6 +30,7 @@ internal object GistNative {
     }
 
     @JvmStatic external fun create(cacheRoot: ByteArray?, directory: ByteArray?): Long
+    @JvmStatic external fun createVariant(variant: ByteArray?, cacheRoot: ByteArray?, directory: ByteArray?): Long
     @JvmStatic external fun createBundled(
         tokenizer: ByteArray, embedding: ByteArray, embMeta: ByteArray,
         config: ByteArray, taxonomy: ByteArray, model: ByteArray,

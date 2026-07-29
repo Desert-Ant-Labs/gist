@@ -5,6 +5,23 @@
 import Inference
 import ModelStore
 
+/// Which published model to load.
+///
+/// The default multilingual model covers 36 topics across 101 languages (~74 MB).
+/// The English-only variant is the same 36 topics and the same classifier head at
+/// ~15 MB, for apps that only ever see English/Latin text — **other scripts are
+/// not covered** (non-Latin input degrades to noise), so pick it deliberately.
+/// Both live in the same model repo; the variant selects which files are fetched.
+public enum GistVariant: String, Sendable, CaseIterable {
+    /// The full model: 36 topics, 101 languages (~74 MB). The default.
+    case multilingual
+    /// English-only: same 36 topics and head, ~15 MB. English/Latin text only.
+    case english
+
+    /// Repo-relative path prefix for this variant's files (`""` or `"en/"`).
+    var pathPrefix: String { self == .english ? "en/" : "" }
+}
+
 /// The model's file names and per-platform artifacts, in one place.
 enum GistModel {
     static let tokenizer = "gist_tokenizer.bin"
@@ -61,15 +78,17 @@ public struct ModelAssets: Sendable {
     }
 
     /// Build from a resolved model directory: read the sidecars and let the core
-    /// pick this platform's session for the artifact.
-    static func gist(files: StoredModel) async throws -> ModelAssets {
-        ModelAssets(
-            tokenizer: try files.read(GistModel.tokenizer),
-            embedding: try files.read(GistModel.embedding),
-            embeddingMetaJSON: try files.readString(GistModel.embeddingMeta),
-            configJSON: try files.readString(GistModel.config),
-            taxonomyJSON: try files.readString(GistModel.taxonomy),
-            session: try await files.inferenceSession(model: GistModel.artifact, hostGlobal: "__GistHost"))
+    /// pick this platform's session for the artifact. `variant` selects the
+    /// subfolder its files were fetched into (`""` multilingual, `"en/"` English).
+    static func gist(files: StoredModel, variant: GistVariant) async throws -> ModelAssets {
+        let p = variant.pathPrefix
+        return ModelAssets(
+            tokenizer: try files.read(p + GistModel.tokenizer),
+            embedding: try files.read(p + GistModel.embedding),
+            embeddingMetaJSON: try files.readString(p + GistModel.embeddingMeta),
+            configJSON: try files.readString(p + GistModel.config),
+            taxonomyJSON: try files.readString(p + GistModel.taxonomy),
+            session: try await files.inferenceSession(model: p + GistModel.artifact, hostGlobal: "__GistHost"))
     }
 }
 
@@ -77,28 +96,31 @@ public extension Gist {
     /// The published model repository.
     static var modelRepo: String { "desert-ant-labs/gist" }
     /// The model revision this SDK is built against (pinned; not configurable).
-    static var modelRevision: String { "v2.0.0" }
+    /// Holds both variants: multilingual at the repo root, English under `en/`.
+    static var modelRevision: String { "v2.1.0" }
 
     internal static func resolvedAssets(
+        variant: GistVariant = .multilingual,
         directory: String?, cacheRoot: String? = nil,
         progress: @Sendable @escaping (Double) -> Void
     ) async throws -> ModelAssets {
-        let files = try await distribution().resolve(cacheDirectory: directory, cacheRoot: cacheRoot) { progress($0.fraction) }
-        return try await .gist(files: files)
+        let files = try await distribution(variant: variant).resolve(cacheDirectory: directory, cacheRoot: cacheRoot) { progress($0.fraction) }
+        return try await .gist(files: files, variant: variant)
     }
 
-    internal static func isModelAvailable(directory: String?, cacheRoot: String? = nil) -> Bool {
-        distribution().isAvailable(cacheDirectory: directory, cacheRoot: cacheRoot)
+    internal static func isModelAvailable(variant: GistVariant = .multilingual, directory: String?, cacheRoot: String? = nil) -> Bool {
+        distribution(variant: variant).isAvailable(cacheDirectory: directory, cacheRoot: cacheRoot)
     }
 
-    private static func distribution() -> ModelDistribution {
-        let sidecars = [GistModel.tokenizer, GistModel.embedding, GistModel.embeddingMeta,
-                        GistModel.config, GistModel.taxonomy]
-        let tflite = [GistModel.tflite] + sidecars
+    private static func distribution(variant: GistVariant) -> ModelDistribution {
+        let p = variant.pathPrefix
+        let sidecars = [p + GistModel.tokenizer, p + GistModel.embedding, p + GistModel.embeddingMeta,
+                        p + GistModel.config, p + GistModel.taxonomy]
+        let tflite = [p + GistModel.tflite] + sidecars
         return ModelDistribution(
             repo: modelRepo, revision: modelRevision,
             files: [
-                .apple: [GistModel.coreML + "/"] + sidecars,
+                .apple: [p + GistModel.coreML + "/"] + sidecars,
                 .android: tflite, .linux: tflite, .windows: tflite, .web: tflite,
             ]
         )

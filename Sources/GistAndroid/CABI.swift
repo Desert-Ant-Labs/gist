@@ -9,6 +9,7 @@ import PlatformSupport
 // stack. Instance-based, mirroring the Swift SDK (one `Gist` per handle).
 //
 //   gist_create(cacheRootUTF8, dirUTF8|NULL)                              -> handle | NULL
+//   gist_create_variant(variantUTF8|NULL, cacheRootUTF8, dirUTF8|NULL)    -> handle | NULL
 //   gist_create_bundled(tok,tokLen, emb,embLen, embMetaUTF8,             \
 //                       cfgUTF8, taxUTF8, model,modelLen)                 -> handle | NULL
 //   gist_create_bundled_path(tok,tokLen, emb,embLen, embMetaUTF8,        \
@@ -47,6 +48,23 @@ public func gist_create(
     _ cacheRoot: UnsafePointer<CChar>?, _ directory: UnsafePointer<CChar>?
 ) -> UnsafeMutableRawPointer? {
     let g = Gist(
+        directory: directory.map { String(cString: $0) },
+        cacheRoot: cacheRoot.map { String(cString: $0) })
+    return Unmanaged.passRetained(Handle(g)).toOpaque()
+}
+
+/// Create a tagger for a specific model variant. `variant` is `"english"`
+/// (or `"en"`) for the English-only build; anything else (incl. NULL) uses the
+/// multilingual default. Same cache/download semantics as `gist_create`.
+@_cdecl("gist_create_variant")
+public func gist_create_variant(
+    _ variant: UnsafePointer<CChar>?,
+    _ cacheRoot: UnsafePointer<CChar>?, _ directory: UnsafePointer<CChar>?
+) -> UnsafeMutableRawPointer? {
+    let v = variant.map { String(cString: $0) }
+    let gistVariant: GistVariant = (v == "english" || v == "en") ? .english : .multilingual
+    let g = Gist(
+        variant: gistVariant,
         directory: directory.map { String(cString: $0) },
         cacheRoot: cacheRoot.map { String(cString: $0) })
     return Unmanaged.passRetained(Handle(g)).toOpaque()

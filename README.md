@@ -49,7 +49,7 @@ In the browser, `@litertjs/core` is a peer dependency (LiteRT.js inference). See
 Add the package to `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/Desert-Ant-Labs/gist.git", from: "2.0.1")
+.package(url: "https://github.com/Desert-Ant-Labs/gist.git", from: "2.1.0")
 ```
 
 ```swift
@@ -75,8 +75,8 @@ let gist = Gist(bundle: GistCoreMLResourcesBundle.bundle)
 
 ```kotlin
 dependencies {
-    implementation("ai.desertant:gist:2.0.1")
-    // implementation("ai.desertant:gist-tflite-resources:2.0.1")   // optional: bundle the model offline
+    implementation("ai.desertant:gist:2.1.0")
+    // implementation("ai.desertant:gist-tflite-resources:2.1.0")   // optional: bundle the model offline
 }
 ```
 
@@ -89,6 +89,34 @@ val gist = Gist(context)            // downloads on demand into the app cache; l
 val topics = gist.classify("How to start a podcast with just your iPhone")   // suspend -> List<Topic>
 val scores = gist.scores("Cómo invertir en fondos indexados")                // suspend -> Map<String, Double>
 ```
+
+## Model variants — multilingual (default) or English-only
+
+gist ships two builds of the same 36-topic model, selected with a flag at load time:
+
+| Variant | Size (download) | Languages | Use when |
+|---|---:|---|---|
+| `multilingual` *(default)* | ~74 MB | 101 | any language, or mixed input |
+| `english` | **~15 MB** | English / Latin only | your app only ever sees English text |
+
+The English-only build uses the **same classifier head** and is **topic-identical** to the multilingual model on English input (it's a vocabulary prune, no retraining) — it's just ~5× smaller. It does **not** cover non-Latin scripts: a Japanese or Arabic post will produce noise, so only pick it when the input is reliably English/Latin.
+
+```ts
+// JavaScript (Node + browser)
+const gist = await Gist.load({ variant: "english" });
+```
+
+```swift
+// Swift
+let gist = Gist(variant: .english)
+```
+
+```kotlin
+// Kotlin / Android
+val gist = Gist(context, variant = GistVariant.ENGLISH)
+```
+
+Both variants live in the same model repo (English under `en/`) at the SDK's pinned revision; the flag just selects which files are fetched, and each is cached separately. Omit the flag for the multilingual default.
 
 ## Aggregating a collection
 
@@ -136,7 +164,7 @@ bundling is opt-in (Swift `BundledModel` trait, `ai.desertant:gist-tflite-resour
 | `gist_tokenizer.bin` | ~4 MB | the multilingual Unigram tokenizer |
 | `taxonomy.json`, `gist_config.json` | tiny | the 36 topics + slugs/threshold |
 
-Runs on CPU (XNNPACK) by default.
+Runs on CPU (XNNPACK) by default. For English-only apps, the `english` variant is **~15 MB** (a smaller embedding + tokenizer, same head) — see [Model variants](#model-variants--multilingual-default-or-english-only).
 
 ## Evaluation
 

@@ -28,6 +28,17 @@ await gist.scores("Cómo invertir en fondos indexados");
 // { finance: 0.98, business: 0.41, technology: 0.02, ... }   // full 36-topic distribution
 ```
 
+### Model variants
+
+Two builds of the same 36-topic model, chosen at load:
+
+```ts
+await Gist.load();                          // multilingual, 101 languages (~74 MB) — default
+await Gist.load({ variant: "english" });    // English-only (~15 MB), English/Latin text only
+```
+
+The `english` variant uses the same classifier head and is topic-identical on English input — it's just ~5× smaller. It does **not** cover non-Latin scripts, so only pick it when the input is reliably English.
+
 ### Aggregating a collection
 
 `channelTopics` (pure, no model) folds a collection of scored posts — a channel, a feed, an
@@ -52,7 +63,7 @@ channelTopics(posts, { topN: 5 });
 
 | | |
 |---|---|
-| `await Gist.load(options?)` | Load the model (downloads + caches on first use) and return a tagger. Pass `{ directory }` to use self-hosted files offline. |
+| `await Gist.load(options?)` | Load the model (downloads + caches on first use) and return a tagger. `{ variant: "english" }` selects the ~15 MB English-only model; `{ directory }` uses self-hosted files offline. |
 | `await gist.classify(text, { topK? })` | Ranked topics above the tuned threshold (top topic always included): `[{ slug, name, score }]`. |
 | `await gist.scores(text)` | The full 36-topic distribution: `{ [slug]: probability }`. |
 | `channelTopics(posts, options?)` | Roll a collection up into `[{ slug, share, postCount }]`. Options: `topN`, `floor`, `minPosts`, `halfLifeDays`. |

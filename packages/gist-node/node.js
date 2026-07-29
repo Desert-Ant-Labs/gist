@@ -35,6 +35,7 @@ const core = loadNative({
   coreName: "GistNode",
   symbols: {
     create: "void* gist_create(const char*, const char*)",
+    createVariant: "void* gist_create_variant(const char*, const char*, const char*)",
     isDownloaded: "int gist_is_downloaded(void*)",
     download: "int gist_download(void*)",
     scores: "void* gist_scores(void*, const char*)",
@@ -76,12 +77,18 @@ export class Gist {
    * cached under the OS cache dir by the native core. Pass a `directory` to adopt
    * self-hosted files (offline) instead of downloading. The native runs LiteRT on
    * Linux (`.tflite`) and Core ML on macOS (`.mlmodelc`).
+   *
+   * Pass `variant: "english"` for the compact English-only model (~15 MB;
+   * English/Latin text only). The default `"multilingual"` covers 101 languages.
    */
   static async load(options = {}) {
     const onProgress = typeof options.onProgress === "function" ? options.onProgress : undefined;
     const cacheRoot = options.cacheRoot ?? core.defaultCacheRoot();
     const directory = options.directory ?? null;
-    const handle = lib.create(cacheRoot, directory);
+    const variant = options.variant === "english" || options.variant === "en" ? "english" : "multilingual";
+    const handle = variant === "multilingual"
+      ? lib.create(cacheRoot, directory)
+      : lib.createVariant(variant, cacheRoot, directory);
     if (!handle) throw new Error("@desert-ant-labs/gist: failed to create tagger");
     const gist = new Gist(handle);
     if (lib.isDownloaded(handle) === 0) {
