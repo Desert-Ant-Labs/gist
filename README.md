@@ -166,6 +166,10 @@ bundling is opt-in (Swift `BundledModel` trait, `ai.desertant:gist-tflite-resour
 
 Runs on CPU (XNNPACK) by default. For English-only apps, the `english` variant is **~15 MB** (a smaller embedding + tokenizer, same head) — see [Model variants](#model-variants--multilingual-default-or-english-only).
 
+## Topic taxonomy & standards mapping
+
+The 36 topics map to **IAB Content Taxonomy 2.2** (with stable node IDs) and **Apple Podcasts categories**, so gist output rolls up cleanly into existing systems. The machine-readable crosswalk is [`taxonomy_crosswalk.json`](./taxonomy_crosswalk.json) (also on the [model repo](https://huggingface.co/desert-ant-labs/gist/blob/main/taxonomy_crosswalk.json)) — e.g. `law` → IAB `383`, `crafts-hobbies` → IAB `248`, `finance` → IAB `391`. Five topics with no IAB node are flagged as gist extensions.
+
 ## Evaluation
 
 Recall on a held-out set of **572 human-labeled real posts (36 topics)**. Multi-label, so the

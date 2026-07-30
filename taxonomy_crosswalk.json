@@ -1,0 +1,330 @@
+{
+  "iab_taxonomy": "IAB Content Taxonomy 2.2",
+  "apple_taxonomy": "Apple Podcasts categories",
+  "topics": {
+    "arts-culture": {
+      "name": "Arts & Culture",
+      "iab_id": "201",
+      "iab_name": "Fine Art",
+      "iab_tier": 1,
+      "gist_extension": false,
+      "apple_category": "Arts",
+      "note": ""
+    },
+    "business": {
+      "name": "Business & Entrepreneurship",
+      "iab_id": "52",
+      "iab_name": "Business and Finance",
+      "iab_tier": 1,
+      "gist_extension": false,
+      "apple_category": "Business",
+      "note": ""
+    },
+    "finance": {
+      "name": "Personal Finance & Investing",
+      "iab_id": "391",
+      "iab_name": "Personal Finance",
+      "iab_tier": 1,
+      "gist_extension": false,
+      "apple_category": "Business",
+      "note": ""
+    },
+    "career": {
+      "name": "Careers & Productivity",
+      "iab_id": "123",
+      "iab_name": "Careers",
+      "iab_tier": 1,
+      "gist_extension": false,
+      "apple_category": "Business",
+      "note": ""
+    },
+    "technology": {
+      "name": "Technology & Software",
+      "iab_id": "596",
+      "iab_name": "Technology & Computing",
+      "iab_tier": 1,
+      "gist_extension": false,
+      "apple_category": "Technology",
+      "note": ""
+    },
+    "science": {
+      "name": "Science",
+      "iab_id": "464",
+      "iab_name": "Science",
+      "iab_tier": 1,
+      "gist_extension": false,
+      "apple_category": "Science",
+      "note": ""
+    },
+    "health-fitness": {
+      "name": "Health & Fitness",
+      "iab_id": "223",
+      "iab_name": "Healthy Living",
+      "iab_tier": 1,
+      "gist_extension": false,
+      "apple_category": "Health & Fitness",
+      "note": ""
+    },
+    "food-drink": {
+      "name": "Food & Cooking",
+      "iab_id": "210",
+      "iab_name": "Food & Drink",
+      "iab_tier": 1,
+      "gist_extension": false,
+      "apple_category": "Leisure",
+      "note": ""
+    },
+    "travel": {
+      "name": "Travel",
+      "iab_id": "653",
+      "iab_name": "Travel",
+      "iab_tier": 1,
+      "gist_extension": false,
+      "apple_category": "Society & Culture",
+      "note": ""
+    },
+    "education": {
+      "name": "Education & Learning",
+      "iab_id": "132",
+      "iab_name": "Education",
+      "iab_tier": 1,
+      "gist_extension": false,
+      "apple_category": "Education",
+      "note": ""
+    },
+    "news-politics": {
+      "name": "News & Politics",
+      "iab_id": "379",
+      "iab_name": "News and Politics",
+      "iab_tier": 1,
+      "gist_extension": false,
+      "apple_category": "News",
+      "note": ""
+    },
+    "society-culture": {
+      "name": "Society & Culture",
+      "iab_id": "379",
+      "iab_name": "News and Politics",
+      "iab_tier": 1,
+      "gist_extension": true,
+      "apple_category": "Society & Culture",
+      "note": "no Society node in IAB 2.2; gist catch-all, mapped to nearest parent"
+    },
+    "comedy": {
+      "name": "Comedy & Entertainment",
+      "iab_id": "440",
+      "iab_name": "Humor and Satire",
+      "iab_tier": 2,
+      "gist_extension": false,
+      "apple_category": "Comedy",
+      "note": "under Pop Culture (432)"
+    },
+    "music": {
+      "name": "Music",
+      "iab_id": "338",
+      "iab_name": "Music and Audio",
+      "iab_tier": 1,
+      "gist_extension": false,
+      "apple_category": "Music",
+      "note": ""
+    },
+    "film-tv": {
+      "name": "Film & TV",
+      "iab_id": "324",
+      "iab_name": "Movies",
+      "iab_tier": 1,
+      "gist_extension": false,
+      "apple_category": "TV & Film",
+      "note": "gist merges Movies (324) + Television (640)"
+    },
+    "gaming": {
+      "name": "Video Gaming",
+      "iab_id": "680",
+      "iab_name": "Video Gaming",
+      "iab_tier": 1,
+      "gist_extension": false,
+      "apple_category": "Leisure",
+      "note": ""
+    },
+    "sports": {
+      "name": "Sports",
+      "iab_id": "483",
+      "iab_name": "Sports",
+      "iab_tier": 1,
+      "gist_extension": false,
+      "apple_category": "Sports",
+      "note": ""
+    },
+    "lifestyle-fashion": {
+      "name": "Lifestyle & Fashion",
+      "iab_id": "552",
+      "iab_name": "Style & Fashion",
+      "iab_tier": 1,
+      "gist_extension": false,
+      "apple_category": "Society & Culture",
+      "note": ""
+    },
+    "home-garden": {
+      "name": "Home, Garden & DIY",
+      "iab_id": "274",
+      "iab_name": "Home & Garden",
+      "iab_tier": 1,
+      "gist_extension": false,
+      "apple_category": "Leisure",
+      "note": ""
+    },
+    "parenting-family": {
+      "name": "Family & Parenting",
+      "iab_id": "192",
+      "iab_name": "Parenting",
+      "iab_tier": 2,
+      "gist_extension": false,
+      "apple_category": "Kids & Family",
+      "note": "under Family and Relationships (186)"
+    },
+    "relationships": {
+      "name": "Relationships & Dating",
+      "iab_id": "186",
+      "iab_name": "Family and Relationships",
+      "iab_tier": 1,
+      "gist_extension": false,
+      "apple_category": "Society & Culture",
+      "note": "broader than Dating (188); covers romance + friendship"
+    },
+    "self-improvement": {
+      "name": "Self-Improvement",
+      "iab_id": null,
+      "iab_name": null,
+      "iab_tier": null,
+      "gist_extension": true,
+      "apple_category": "Education",
+      "note": "no productivity/self-improvement node in IAB 2.2 - gist extension"
+    },
+    "spirituality-religion": {
+      "name": "Religion & Spirituality",
+      "iab_id": "453",
+      "iab_name": "Religion & Spirituality",
+      "iab_tier": 1,
+      "gist_extension": false,
+      "apple_category": "Religion & Spirituality",
+      "note": ""
+    },
+    "history": {
+      "name": "History",
+      "iab_id": null,
+      "iab_name": null,
+      "iab_tier": null,
+      "gist_extension": true,
+      "apple_category": "History",
+      "note": "no History node in IAB 2.2 — gist extension, no clean parent"
+    },
+    "true-crime": {
+      "name": "True Crime",
+      "iab_id": "380",
+      "iab_name": "Crime",
+      "iab_tier": 2,
+      "gist_extension": false,
+      "apple_category": "True Crime",
+      "note": "under News and Politics (379)"
+    },
+    "creator-economy": {
+      "name": "Creator Economy & Marketing",
+      "iab_id": "52",
+      "iab_name": "Business and Finance",
+      "iab_tier": 1,
+      "gist_extension": true,
+      "apple_category": "Business",
+      "note": "no creator-economy node; gist extension mapped to nearest parent"
+    },
+    "pets-animals": {
+      "name": "Pets & Animals",
+      "iab_id": "422",
+      "iab_name": "Pets",
+      "iab_tier": 1,
+      "gist_extension": false,
+      "apple_category": "Leisure",
+      "note": ""
+    },
+    "automotive": {
+      "name": "Automotive",
+      "iab_id": "1",
+      "iab_name": "Automotive",
+      "iab_tier": 1,
+      "gist_extension": false,
+      "apple_category": "Leisure",
+      "note": ""
+    },
+    "beauty": {
+      "name": "Beauty & Skincare",
+      "iab_id": "553",
+      "iab_name": "Beauty",
+      "iab_tier": 2,
+      "gist_extension": false,
+      "apple_category": "Arts",
+      "note": "under Style & Fashion (552)"
+    },
+    "shopping-deals": {
+      "name": "Shopping & Deals",
+      "iab_id": "473",
+      "iab_name": "Shopping",
+      "iab_tier": 1,
+      "gist_extension": false,
+      "apple_category": "Business",
+      "note": ""
+    },
+    "outdoors-nature": {
+      "name": "Outdoors & Nature",
+      "iab_id": "239",
+      "iab_name": "Hobbies & Interests",
+      "iab_tier": 1,
+      "gist_extension": true,
+      "apple_category": "Sports",
+      "note": "no specific Outdoors node — mapped to nearest parent"
+    },
+    "books-literature": {
+      "name": "Books & Literature",
+      "iab_id": "42",
+      "iab_name": "Books and Literature",
+      "iab_tier": 1,
+      "gist_extension": false,
+      "apple_category": "Arts",
+      "note": ""
+    },
+    "real-estate": {
+      "name": "Real Estate",
+      "iab_id": "441",
+      "iab_name": "Real Estate",
+      "iab_tier": 1,
+      "gist_extension": false,
+      "apple_category": "Business",
+      "note": ""
+    },
+    "photography-video": {
+      "name": "Photography & Video",
+      "iab_id": "255",
+      "iab_name": "Photography",
+      "iab_tier": 2,
+      "gist_extension": false,
+      "apple_category": "Arts",
+      "note": "under Hobbies & Interests (239)"
+    },
+    "crafts-hobbies": {
+      "name": "Crafts & Hobbies",
+      "iab_id": "248",
+      "iab_name": "Arts and Crafts",
+      "iab_tier": 2,
+      "gist_extension": false,
+      "apple_category": "Leisure",
+      "note": "under Hobbies & Interests (239)"
+    },
+    "law": {
+      "name": "Law & Justice",
+      "iab_id": "383",
+      "iab_name": "Law",
+      "iab_tier": 2,
+      "gist_extension": false,
+      "apple_category": "Government",
+      "note": "under News and Politics (379)"
+    }
+  }
+}
